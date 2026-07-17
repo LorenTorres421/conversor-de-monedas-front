@@ -1,0 +1,22 @@
+<div class="dashboard-container">
+  <section>
+    <img src="/assets/images/swift_imagotype.png">
+    <nav>
+      <div class="nav-links">
+        <a [routerLink]="['home']" routerLinkActive="active-tab">Home</a>
+        <a [routerLink]="['currencies']" routerLinkActive="active-tab">Currencies</a>
+        <a [routerLink]="['conversions']" routerLinkActive="active-tab">Conversions</a>
+        <a [routerLink]="['subscription']" routerLinkActive="active-tab">Subscription</a>
+        @if (this.authService.user?.isAdmin) {
+        <a [routerLink]="['admin']" routerLinkActive="active-admin-tab" class="admin-link">Admin</a>
+        }
+      </div>
+      <div class="nav-buttons">
+        <button (click)="logout()">Logout</button>
+      </div>
+    </nav>
+  </section>
+  <main>
+    <router-outlet />
+  </main>
+</div>

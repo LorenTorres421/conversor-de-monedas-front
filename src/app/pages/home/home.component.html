@@ -1,0 +1,100 @@
+<header class="home-header">
+  <h1>Dashboard</h1>
+  <p>Welcome back, {{authService.user?.username}}!</p>
+</header>
+<div>
+  <div>
+    <section class="conversion">
+      @if (authService.user?.conversionsLeft == '0') {
+      <div class="limit-reached">
+        <p>No conversions left!</p>
+        <img src="assets/images/rb_43953.png">
+        <p>Subscribe now to get access to hundreds of monthly conversions!</p>
+      </div>
+      } @else {
+      <form #conversionForm="ngForm" (ngSubmit)="convert(conversionForm)">
+        <h2>Quick Convert</h2>
+        <fieldset>
+          <div class="form-column">
+            <div>
+              <label for="fromCurrencyId">FROM</label>
+              <select name="fromCurrencyId" required ngModel>
+                <option value="">Select a currency</option>
+                @for (currency of currencyService.currencies$ | async; track $index){
+                <option value="{{currency.id}}">{{currency.name}}</option>
+                }
+              </select>
+            </div>
+            <div>
+              <p>AMOUNT<p>
+                  <input type="number" name="amount" placeholder="Type here" required ngModel>
+            </div>
+          </div>
+          <div class="form-column">
+            <div>
+              <label for="toCurrencyId">TO</label>
+              <select name="toCurrencyId" required ngModel>
+                <option value="">Select a currency</option>
+                @for (currency of currencyService.currencies$ | async; track $index) {
+                <option value="{{currency.id}}">{{currency.name}}</option>
+                }
+              </select>
+            </div>
+            <div>
+              <p>AMOUNT</p>
+              @if(lastConversion != undefined) {
+              <p class="output">{{lastConversion}}</p>
+              } @else {
+              <p class="output">Result</p>
+              }
+            </div>
+          </div>
+        </fieldset>
+        <div class="btn-ctn">
+          <button type="submit" (keyup.enter)="convert(conversionForm)" [disabled]="conversionForm.invalid"
+            [ngClass]="{'btn-disabled': conversionForm.invalid, 'btn-enabled': conversionForm.valid}"><a>Convert</a></button>
+        </div>
+      </form>
+      }
+    </section>
+    <section class="info">
+      <div>
+        <h3>User Info</h3>
+        <p>Email address: <b>{{authService.user?.email}}</b></p>
+        <p>Current plan: <b>{{(subscriptionService.currentSubscriptionPlan$ | async)?.name}}</b></p>
+        <p>Conversions left: <b>{{authService.user?.conversionsLeft}}</b></p>
+      </div>
+    </section>
+  </div>
+  <section class="faves">
+    <h2>Favorite Currencies</h2>
+    <div class="currencies">
+      @for (fave of userService.favoriteCurrencies$ | async; track $index) {
+      <div class="currency-card">
+        <div class="card-body">
+          <div class="symbol-ctn">
+            <p>{{fave.symbol}}</p>
+          </div>
+          <div>
+            <p>{{fave.name}}</p>
+            <p class="ISOCode">{{fave.isoCode}}</p>
+          </div>
+        </div>
+        <div class="card-footer">
+          <p>EXR: {{fave.exchangeRate}}</p>
+          <aside>
+            <img (click)="removeFavorite(fave.isoCode)" src="/assets/vectors/broken_heart.svg"
+              alt="Remove from favorites.">
+          </aside>
+        </div>
+      </div>
+      } @empty {
+      <div class="no-currencies">
+        <p>You have no favorites!</p>
+        <img src="/assets/images/no-currencies.png">
+        <p>Once you pick some favorite currencies from the Currencies tab we will show them here.</p>
+      </div>
+      }
+    </div>
+  </section>
+</div>
